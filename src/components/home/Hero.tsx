@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
 import { CodeBracketIcon, WrenchScrewdriverIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Modal from "../common/Modal";
 import WavingHand from "./WavingHand";
 import { techStack, tools } from "../../data/tech";
 import { TechItem } from "../../types";
 import { containerVariants, itemVariants, rightSideVariants } from "../../utils/animations";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useWindowResize } from "../../hooks/useWindowResize";
 
 const getRandomIcons = (count: number): TechItem[] => {
     const allTech: TechItem[] = [
@@ -26,28 +27,42 @@ const getRandomIcons = (count: number): TechItem[] => {
 const Hero: React.FC = () => {
     const [selectedItem, setSelectedItem] = useState<TechItem | null>(null);
     const { theme } = useTheme();
-    const [showRightSide, setShowRightSide] = useState(window.innerWidth >= 1280);
+    const { isXl } = useWindowResize();
     const [randomIcons] = useState(() => getRandomIcons(5));
 
-    useEffect(() => {
-        const handleResize = () => {
-            setShowRightSide(window.innerWidth >= 1280);
-        };
+    const iconAnimations: {
+        position: { x: number; y: number };
+        animation: { y: number[]; x: number[]; rotate: number[] };
+        duration: number;
+    }[] = useMemo(
+        () =>
+            randomIcons.map((_: TechItem, index: number) => {
+                const baseAngle: number = index * 72 + 270 + (Math.random() * 20 - 10);
+                const radius: number = 40 + (Math.random() * 8 - 4);
+                const angleRad: number = (baseAngle * Math.PI) / 180;
 
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
+                return {
+                    position: {
+                        x: 45 + radius * Math.cos(angleRad),
+                        y: 45 + radius * Math.sin(angleRad),
+                    },
+                    animation: {
+                        y: [0, -8 + Math.random() * 4, 0],
+                        x: [0, 6 + Math.random() * 4 * (index % 2 ? -1 : 1), 0],
+                        rotate: [0, 6 + Math.random() * 4 * (index % 2 ? -1 : 1), 0],
+                    },
+                    duration: 3 + Math.random() * 2,
+                };
+            }),
+        []
+    );
 
     useEffect(() => {
         const navbar: HTMLElement | null = document.querySelector("header");
         if (navbar) {
-            if (!showRightSide) {
-                navbar.style.display = "none";
-            } else {
-                navbar.style.display = "flex";
-            }
+            navbar.style.display = isXl ? "flex" : "none";
         }
-    }, [showRightSide]);
+    }, [isXl]);
 
     return (
         <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center py-8 sm:py-12 md:py-16 mt-4 sm:mt-6 md:mt-8 overflow-y-auto">
@@ -261,20 +276,13 @@ const Hero: React.FC = () => {
                                 </motion.div>
 
                                 {randomIcons.map((tech: TechItem, index: number) => {
-                                    const baseAngle: number = index * 72 + 270 + (Math.random() * 20 - 10);
-                                    const radius: number = 40 + (Math.random() * 8 - 4);
-
-                                    const angleRad: number = (baseAngle * Math.PI) / 180;
-                                    const x: number = 45 + radius * Math.cos(angleRad);
-                                    const y: number = 45 + radius * Math.sin(angleRad);
-
                                     return (
                                         <motion.div
                                             key={tech.name}
                                             className="absolute w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl glass-card cursor-grab active:cursor-grabbing z-20"
                                             style={{
-                                                top: `${y}%`,
-                                                left: `${x}%`,
+                                                top: `${iconAnimations[index].position.y}%`,
+                                                left: `${iconAnimations[index].position.x}%`,
                                                 transform: `translate(-50%, -50%)`,
                                             }}
                                             drag
@@ -294,13 +302,9 @@ const Hero: React.FC = () => {
                                                 scale: 1.1,
                                                 zIndex: 50,
                                             }}
-                                            animate={{
-                                                y: [0, -8 + Math.random() * 4, 0],
-                                                x: [0, 6 + Math.random() * 4 * (index % 2 ? -1 : 1), 0],
-                                                rotate: [0, 6 + Math.random() * 4 * (index % 2 ? -1 : 1), 0],
-                                            }}
+                                            animate={iconAnimations[index].animation}
                                             transition={{
-                                                duration: 3 + Math.random() * 2,
+                                                duration: iconAnimations[index].duration,
                                                 repeat: Infinity,
                                                 ease: "easeInOut",
                                                 delay: index * 0.2,

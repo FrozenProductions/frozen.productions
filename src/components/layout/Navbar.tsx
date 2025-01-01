@@ -1,9 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { useTheme } from "../../contexts/ThemeContext";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { NavItem } from "../../types";
+import { useWindowResize } from "../../hooks/useWindowResize";
+import { useScrollVisibility } from "../../hooks/useScrollVisibility";
 
 const navItems: NavItem[] = [
     { label: "Home", href: "#home" },
@@ -13,54 +15,11 @@ const navItems: NavItem[] = [
 
 const Navbar: React.FC = () => {
     const { theme, toggleTheme } = useTheme();
-    const [isVisible, setIsVisible] = useState(true);
     const { isScrolled, activeSection } = useScrollPosition();
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-    const [rightSideVisible, setRightSideVisible] = useState(window.innerWidth >= 1280);
+    const { isMobile, isXl } = useWindowResize();
+    const isVisible: boolean = useScrollVisibility(isXl);
 
-    useEffect(() => {
-        let lastScrollPosition: number = window.pageYOffset;
-        let ticking: boolean = false;
-
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
-            setRightSideVisible(window.innerWidth >= 1280);
-        };
-
-        const handleScroll: () => void = () => {
-            const currentScrollY: number = window.pageYOffset;
-            const scrollDifference: number = Math.abs(currentScrollY - lastScrollPosition);
-
-            if (scrollDifference > 10 && rightSideVisible) {
-                if (currentScrollY > lastScrollPosition) {
-                    setIsVisible(false);
-                } else {
-                    setIsVisible(true);
-                }
-                lastScrollPosition = currentScrollY;
-            }
-        };
-
-        const onScroll: () => void = () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    handleScroll();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-
-        window.addEventListener("scroll", onScroll);
-        window.addEventListener("resize", handleResize);
-
-        return () => {
-            window.removeEventListener("scroll", onScroll);
-            window.removeEventListener("resize", handleResize);
-        };
-    }, [rightSideVisible]);
-
-    if (isMobile || !rightSideVisible) return null;
+    if (isMobile || !isXl) return null;
 
     return (
         <AnimatePresence>
