@@ -1,5 +1,4 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { useTheme } from "../../contexts/ThemeContext";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
