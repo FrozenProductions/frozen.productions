@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { useTheme } from "../../contexts/ThemeContext";
-import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { NavItem } from "../../types";
 import { useWindowResize } from "../../hooks/useWindowResize";
 import { useScrollVisibility } from "../../hooks/useScrollVisibility";
+import ThemeToggle from "../layout/ThemeToggle";
 
 const navItems: NavItem[] = [
     { label: "Home", href: "#home" },
@@ -13,7 +13,7 @@ const navItems: NavItem[] = [
 ];
 
 const Navbar: React.FC = () => {
-    const { theme, toggleTheme } = useTheme();
+    const { theme } = useTheme();
     const { isScrolled, activeSection } = useScrollPosition();
     const { isMobile, isXl } = useWindowResize();
     const isVisible: boolean = useScrollVisibility(isXl);
@@ -61,12 +61,13 @@ const Navbar: React.FC = () => {
                                         }`}
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        onClick={(e) => {
+                                        onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                                             e.preventDefault();
-                                            const element = document.querySelector(item.href);
+                                            const element: HTMLElement | null = document.querySelector(item.href);
                                             if (element) {
-                                                const elementPosition = element.getBoundingClientRect().top;
-                                                const offsetPosition = elementPosition + window.pageYOffset - 100;
+                                                const elementPosition: number = element.getBoundingClientRect().top;
+                                                const offsetPosition: number =
+                                                    elementPosition + window.pageYOffset - 100;
 
                                                 window.scrollTo({
                                                     top: offsetPosition,
@@ -80,42 +81,7 @@ const Navbar: React.FC = () => {
                                 ))}
                             </motion.div>
 
-                            <motion.button
-                                className="glass-pill p-2 relative"
-                                onClick={toggleTheme}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                <motion.div
-                                    className="relative w-6 h-6"
-                                    initial={false}
-                                    animate={{
-                                        rotate: theme === "dark" ? 0 : 180,
-                                    }}
-                                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                                >
-                                    <motion.div
-                                        className="absolute inset-0"
-                                        initial={false}
-                                        animate={{
-                                            opacity: theme === "dark" ? 1 : 0,
-                                        }}
-                                        transition={{ duration: 0.25 }}
-                                    >
-                                        <MoonIcon className={`w-6 h-6 ${theme === "light" ? "invert" : ""}`} />
-                                    </motion.div>
-                                    <motion.div
-                                        className="absolute inset-0"
-                                        initial={false}
-                                        animate={{
-                                            opacity: theme === "dark" ? 0 : 1,
-                                        }}
-                                        transition={{ duration: 0.25 }}
-                                    >
-                                        <SunIcon className={`w-6 h-6 ${theme === "dark" ? "invert" : ""}`} />
-                                    </motion.div>
-                                </motion.div>
-                            </motion.button>
+                            <ThemeToggle />
 
                             <motion.a
                                 href="https://github.com/FrozenProductions"
