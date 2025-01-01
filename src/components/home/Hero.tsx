@@ -8,10 +8,26 @@ import { TechItem } from "../../types";
 import { containerVariants, itemVariants, rightSideVariants } from "../../utils/animations";
 import { useTheme } from "../../contexts/ThemeContext";
 
+const getRandomIcons = (count: number): TechItem[] => {
+    const allTech: TechItem[] = [
+        ...techStack.map((tech: TechItem) => ({
+            name: tech.name.toLowerCase().replace(".", "").replace(" ", ""),
+            invert: tech.invert,
+        })),
+        ...tools.map((tool: TechItem) => ({
+            name: tool.name.toLowerCase().replace(" ", ""),
+            invert: tool.invert,
+        })),
+    ];
+
+    return allTech.sort(() => 0.5 - Math.random()).slice(0, count);
+};
+
 const Hero: React.FC = () => {
     const [selectedItem, setSelectedItem] = useState<TechItem | null>(null);
     const { theme } = useTheme();
     const [showRightSide, setShowRightSide] = useState(window.innerWidth >= 1280);
+    const [randomIcons] = useState(() => getRandomIcons(5));
 
     useEffect(() => {
         const handleResize = () => {
@@ -23,7 +39,7 @@ const Hero: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const navbar = document.querySelector("header");
+        const navbar: HTMLElement | null = document.querySelector("header");
         if (navbar) {
             if (!showRightSide) {
                 navbar.style.display = "none";
@@ -244,14 +260,22 @@ const Hero: React.FC = () => {
                                     ))}
                                 </motion.div>
 
-                                {["react", "typescript", "fmotion", "tailwindcss"].map(
-                                    (tech: string, index: number) => (
+                                {randomIcons.map((tech: TechItem, index: number) => {
+                                    const baseAngle: number = index * 72 + 270 + (Math.random() * 20 - 10);
+                                    const radius: number = 40 + (Math.random() * 8 - 4);
+
+                                    const angleRad: number = (baseAngle * Math.PI) / 180;
+                                    const x: number = 45 + radius * Math.cos(angleRad);
+                                    const y: number = 45 + radius * Math.sin(angleRad);
+
+                                    return (
                                         <motion.div
-                                            key={tech}
+                                            key={tech.name}
                                             className="absolute w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl glass-card cursor-grab active:cursor-grabbing z-20"
                                             style={{
-                                                top: `${10 + index * 25}%`,
-                                                left: index % 2 ? "10%" : "80%",
+                                                top: `${y}%`,
+                                                left: `${x}%`,
+                                                transform: `translate(-50%, -50%)`,
                                             }}
                                             drag
                                             dragConstraints={{
@@ -260,35 +284,38 @@ const Hero: React.FC = () => {
                                                 right: 100,
                                                 bottom: 100,
                                             }}
-                                            dragElastic={0.9}
+                                            dragElastic={0.8}
                                             dragTransition={{
-                                                bounceStiffness: 400,
-                                                bounceDamping: 25,
+                                                power: 0.1,
+                                                timeConstant: 200,
+                                                modifyTarget: (target) => Math.round(target / 50) * 50,
                                             }}
-                                            whileDrag={{ scale: 1.3, zIndex: 50 }}
+                                            whileDrag={{
+                                                scale: 1.1,
+                                                zIndex: 50,
+                                            }}
                                             animate={{
-                                                y: [0, -20, 0],
-                                                x: [0, index % 2 ? -15 : 15, 0],
-                                                rotate: [0, index % 2 ? -15 : 15, 0],
-                                                scale: [1, 1.1, 1],
+                                                y: [0, -8 + Math.random() * 4, 0],
+                                                x: [0, 6 + Math.random() * 4 * (index % 2 ? -1 : 1), 0],
+                                                rotate: [0, 6 + Math.random() * 4 * (index % 2 ? -1 : 1), 0],
                                             }}
                                             transition={{
-                                                duration: 5 + index,
+                                                duration: 3 + Math.random() * 2,
                                                 repeat: Infinity,
                                                 ease: "easeInOut",
-                                                delay: index * 0.3,
+                                                delay: index * 0.2,
                                             }}
                                         >
                                             <img
-                                                src={`/assets/icons/${tech}.svg`}
-                                                alt={tech}
+                                                src={`/assets/icons/${tech.name}.svg`}
+                                                alt={tech.name}
                                                 className={`w-full h-full p-2.5 pointer-events-none ${
-                                                    tech === "fmotion" && theme === "dark" ? "invert" : ""
+                                                    tech.invert && theme === "dark" ? "invert" : ""
                                                 }`}
                                             />
                                         </motion.div>
-                                    )
-                                )}
+                                    );
+                                })}
 
                                 <motion.div
                                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px]"
