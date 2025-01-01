@@ -65,7 +65,7 @@ const Hero: React.FC = () => {
     }, [isXl]);
 
     return (
-        <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center py-8 sm:py-12 md:py-16 mt-4 sm:mt-6 md:mt-8 overflow-y-auto">
+        <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center py-6 sm:py-8 md:py-14 mt-2 sm:mt-3 md:mt-8 overflow-y-auto">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <motion.div
                     className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary/20 rounded-full blur-[60px]"
