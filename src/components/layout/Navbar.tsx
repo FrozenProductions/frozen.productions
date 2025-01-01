@@ -15,16 +15,23 @@ const Navbar: React.FC = () => {
     const { theme, toggleTheme } = useTheme();
     const [isVisible, setIsVisible] = useState(true);
     const { isScrolled, activeSection } = useScrollPosition();
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [rightSideVisible, setRightSideVisible] = useState(window.innerWidth >= 1280);
 
     useEffect(() => {
         let lastScrollPosition: number = window.pageYOffset;
         let ticking: boolean = false;
 
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+            setRightSideVisible(window.innerWidth >= 1280);
+        };
+
         const handleScroll: () => void = () => {
             const currentScrollY: number = window.pageYOffset;
             const scrollDifference: number = Math.abs(currentScrollY - lastScrollPosition);
 
-            if (scrollDifference > 10) {
+            if (scrollDifference > 10 && rightSideVisible) {
                 if (currentScrollY > lastScrollPosition) {
                     setIsVisible(false);
                 } else {
@@ -45,8 +52,15 @@ const Navbar: React.FC = () => {
         };
 
         window.addEventListener("scroll", onScroll);
-        return () => window.removeEventListener("scroll", onScroll);
-    }, []);
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("scroll", onScroll);
+            window.removeEventListener("resize", handleResize);
+        };
+    }, [rightSideVisible]);
+
+    if (isMobile || !rightSideVisible) return null;
 
     return (
         <AnimatePresence>

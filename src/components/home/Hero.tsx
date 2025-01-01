@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { CodeBracketIcon, WrenchScrewdriverIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../common/Modal";
 import WavingHand from "./WavingHand";
 import { techStack, tools } from "../../data/tech";
@@ -11,6 +11,27 @@ import { useTheme } from "../../contexts/ThemeContext";
 const Hero: React.FC = () => {
     const [selectedItem, setSelectedItem] = useState<TechItem | null>(null);
     const { theme } = useTheme();
+    const [showRightSide, setShowRightSide] = useState(window.innerWidth >= 1280);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setShowRightSide(window.innerWidth >= 1280);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    useEffect(() => {
+        const navbar = document.querySelector("header");
+        if (navbar) {
+            if (!showRightSide) {
+                navbar.style.display = "none";
+            } else {
+                navbar.style.display = "flex";
+            }
+        }
+    }, [showRightSide]);
 
     return (
         <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center py-8 sm:py-12 md:py-16 mt-4 sm:mt-6 md:mt-8 overflow-y-auto">
