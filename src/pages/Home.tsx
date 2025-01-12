@@ -55,7 +55,11 @@ const Home: React.FC = () => {
                 </div>
 
                 <div className="relative z-10">
-                    {(isMobile || !isXl) && <ThemeToggle className="fixed top-5 left-5 z-[100] shadow-lg" />}
+                    {(isMobile || !isXl) && (
+                        <div className="fixed top-4 left-4 z-[9999]">
+                            <ThemeToggle className="shadow-lg backdrop-blur-sm" />
+                        </div>
+                    )}
                     <section id="home">
                         <Hero />
                     </section>
