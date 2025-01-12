@@ -50,4 +50,43 @@ interface ThemeContextType {
     toggleTheme: () => void;
 }
 
-export type { TechItem, ModalProps, LayoutProps, Project, NavItem, SocialLink, Theme, ThemeContextType };
+interface WindowSize {
+    width: number;
+    isXl: boolean;
+    isMobile: boolean;
+}
+
+interface FloatingIconsProps {
+    randomIcons: TechItem[];
+    iconAnimations: {
+        position: { x: number; y: number };
+        animation: { y: number[]; x: number[]; rotate: number[] };
+        duration: number;
+    }[];
+}
+
+interface TechSectionProps {
+    icon: React.ReactNode;
+    title: string;
+    items: TechItem[];
+    onItemClick: (item: TechItem) => void;
+}
+
+interface IconWrapperProps {
+    children: ReactNode;
+}
+
+export type {
+    TechItem,
+    ModalProps,
+    LayoutProps,
+    Project,
+    NavItem,
+    SocialLink,
+    Theme,
+    ThemeContextType,
+    WindowSize,
+    FloatingIconsProps,
+    TechSectionProps,
+    IconWrapperProps,
+};

@@ -5,7 +5,7 @@ const ThemeContext: React.Context<ThemeContextType | undefined> = createContext<
     undefined
 );
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+function ThemeProvider({ children }: { children: ReactNode }) {
     const [theme, setTheme] = useState<Theme>(() => {
         const savedTheme: Theme | null = localStorage.getItem("theme") as Theme | null;
         return savedTheme || "dark";
@@ -24,10 +24,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
 }
 
-export function useTheme() {
+function useTheme() {
     const context: ThemeContextType | undefined = useContext(ThemeContext);
     if (context === undefined) {
         throw new Error("useTheme must be used within a ThemeProvider");
     }
     return context;
 }
+
+export { ThemeProvider, useTheme };

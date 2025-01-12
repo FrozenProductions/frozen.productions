@@ -8,6 +8,9 @@ import { TechItem } from "../../types";
 import { containerVariants, itemVariants, rightSideVariants } from "../../utils/animations";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useWindowResize } from "../../hooks/useWindowResize";
+import FloatingIcons from "./hero/FloatingIcons";
+import TechSection from "./hero/TechSection";
+import ProfileSection from "./hero/ProfileSection";
 
 const getRandomIcons = (count: number): TechItem[] => {
     const allTech: TechItem[] = [
@@ -154,89 +157,34 @@ const Hero: React.FC = () => {
                                 />
                                 LeetCode
                             </motion.button>
+                            <motion.button
+                                className="glass-button px-8 py-3 flex items-center gap-2"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => window.open("https://discord.com/users/1155139526394654730", "_blank")}
+                            >
+                                <img
+                                    src="/assets/icons/discord.svg"
+                                    alt="Discord"
+                                    className={`w-5 h-5 ${theme === "dark" ? "" : "invert"}`}
+                                />
+                                Discord
+                            </motion.button>
                         </div>
 
                         <div className="space-y-4 sm:space-y-6 md:space-y-8">
-                            <div>
-                                <h3 className="flex items-center gap-2 text-base sm:text-lg md:text-xl font-semibold mb-3 sm:mb-4 md:mb-6">
-                                    <CodeBracketIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                                    Tech Stack
-                                </h3>
-                                <motion.div
-                                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3"
-                                    variants={{
-                                        hidden: { opacity: 0 },
-                                        visible: {
-                                            opacity: 1,
-                                            transition: { staggerChildren: 0.1 },
-                                        },
-                                    }}
-                                >
-                                    {techStack.map((tech: TechItem) => (
-                                        <motion.div
-                                            key={tech.name}
-                                            className="glass-card p-2 sm:p-3 rounded-lg flex items-center justify-center cursor-pointer"
-                                            variants={{
-                                                hidden: { opacity: 0, y: 20 },
-                                                visible: { opacity: 1, y: 0 },
-                                            }}
-                                            whileHover={{ scale: 1.02 }}
-                                            onClick={() => setSelectedItem(tech)}
-                                        >
-                                            <motion.img
-                                                src={`/assets/icons/${tech.name
-                                                    .toLowerCase()
-                                                    .replace(".", "")
-                                                    .replace(" ", "")}.svg`}
-                                                alt={tech.name}
-                                                className={`w-5 h-5 sm:w-6 sm:h-6 mr-2 ${
-                                                    tech.invert && theme === "dark" ? "invert" : ""
-                                                }`}
-                                            />
-                                            <span className="text-xs sm:text-sm">{tech.name}</span>
-                                        </motion.div>
-                                    ))}
-                                </motion.div>
-                            </div>
-
-                            <div>
-                                <h3 className="flex items-center gap-2 text-base sm:text-lg md:text-xl font-semibold mb-3 sm:mb-4 md:mb-6">
-                                    <WrenchScrewdriverIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                                    Tools
-                                </h3>
-                                <motion.div
-                                    className="grid grid-cols-2 gap-3"
-                                    variants={{
-                                        hidden: { opacity: 0 },
-                                        visible: {
-                                            opacity: 1,
-                                            transition: { staggerChildren: 0.1 },
-                                        },
-                                    }}
-                                >
-                                    {tools.map((tool: TechItem) => (
-                                        <motion.div
-                                            key={tool.name}
-                                            className="glass-card p-4 rounded-lg flex items-center justify-center cursor-pointer"
-                                            variants={{
-                                                hidden: { opacity: 0, y: 20 },
-                                                visible: { opacity: 1, y: 0 },
-                                            }}
-                                            whileHover={{ scale: 1.02 }}
-                                            onClick={() => setSelectedItem(tool)}
-                                        >
-                                            <motion.img
-                                                src={`/assets/icons/${tool.name.toLowerCase().replace(" ", "")}.svg`}
-                                                alt={tool.name}
-                                                className={`w-6 h-6 mr-2 ${
-                                                    tool.invert && theme === "dark" ? "invert" : ""
-                                                }`}
-                                            />
-                                            <span>{tool.name}</span>
-                                        </motion.div>
-                                    ))}
-                                </motion.div>
-                            </div>
+                            <TechSection
+                                icon={<CodeBracketIcon className="w-4 h-4 sm:w-5 sm:h-5" />}
+                                title="Tech Stack"
+                                items={techStack}
+                                onItemClick={setSelectedItem}
+                            />
+                            <TechSection
+                                icon={<WrenchScrewdriverIcon className="w-4 h-4 sm:w-5 sm:h-5" />}
+                                title="Tools"
+                                items={tools}
+                                onItemClick={setSelectedItem}
+                            />
                         </div>
                     </motion.div>
 
@@ -275,82 +223,8 @@ const Hero: React.FC = () => {
                                     ))}
                                 </motion.div>
 
-                                {randomIcons.map((tech: TechItem, index: number) => {
-                                    return (
-                                        <motion.div
-                                            key={tech.name}
-                                            className="absolute w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl glass-card cursor-grab active:cursor-grabbing z-20"
-                                            style={{
-                                                top: `${iconAnimations[index].position.y}%`,
-                                                left: `${iconAnimations[index].position.x}%`,
-                                                transform: `translate(-50%, -50%)`,
-                                            }}
-                                            drag
-                                            dragConstraints={{
-                                                top: -100,
-                                                left: -100,
-                                                right: 100,
-                                                bottom: 100,
-                                            }}
-                                            dragElastic={0.8}
-                                            dragTransition={{
-                                                power: 0.1,
-                                                timeConstant: 200,
-                                                modifyTarget: (target) => Math.round(target / 50) * 50,
-                                            }}
-                                            whileDrag={{
-                                                scale: 1.1,
-                                                zIndex: 50,
-                                            }}
-                                            animate={iconAnimations[index].animation}
-                                            transition={{
-                                                duration: iconAnimations[index].duration,
-                                                repeat: Infinity,
-                                                ease: "easeInOut",
-                                                delay: index * 0.2,
-                                            }}
-                                        >
-                                            <img
-                                                src={`/assets/icons/${tech.name}.svg`}
-                                                alt={tech.name}
-                                                className={`w-full h-full p-2.5 pointer-events-none ${
-                                                    tech.invert && theme === "dark" ? "invert" : ""
-                                                }`}
-                                            />
-                                        </motion.div>
-                                    );
-                                })}
-
-                                <motion.div
-                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px]"
-                                    whileHover={{ scale: 1.05 }}
-                                >
-                                    <motion.div
-                                        className="absolute inset-0 rounded-full bg-primary/20 blur-3xl"
-                                        animate={{
-                                            scale: [1, 1.2, 1],
-                                            opacity: [0.3, 0.5, 0.3],
-                                        }}
-                                        transition={{
-                                            duration: 4,
-                                            repeat: Infinity,
-                                            ease: "easeInOut",
-                                        }}
-                                    />
-
-                                    <motion.div
-                                        className="relative w-full h-full rounded-full border-4 border-primary/20 overflow-hidden"
-                                        whileHover={{ scale: 1.05 }}
-                                    >
-                                        <motion.img
-                                            src="/assets/profile.png"
-                                            alt="Profile"
-                                            className="w-full h-full object-cover"
-                                            whileHover={{ scale: 1.1 }}
-                                            transition={{ duration: 0.3 }}
-                                        />
-                                    </motion.div>
-                                </motion.div>
+                                <FloatingIcons randomIcons={randomIcons} iconAnimations={iconAnimations} />
+                                <ProfileSection />
 
                                 <div className="absolute inset-0">
                                     {[...Array(20)].map((_: any, i: number) => (

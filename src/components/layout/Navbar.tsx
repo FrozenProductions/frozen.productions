@@ -1,16 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { useTheme } from "../../contexts/ThemeContext";
-import { NavItem } from "../../types";
 import { useWindowResize } from "../../hooks/useWindowResize";
 import { useScrollVisibility } from "../../hooks/useScrollVisibility";
 import ThemeToggle from "../layout/ThemeToggle";
-
-const navItems: NavItem[] = [
-    { label: "Home", href: "#home" },
-    { label: "Projects", href: "#projects" },
-    { label: "Contact", href: "#contact" },
-];
+import { navItems } from "../../data/navitems";
 
 const Navbar: React.FC = () => {
     const { theme } = useTheme();
