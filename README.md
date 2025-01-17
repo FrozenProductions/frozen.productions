@@ -27,7 +27,7 @@ A modern, responsive portfolio website showcasing my projects and development jo
 
 ## 🌐 Live Demo
 
-🔗 [Visit Live Site](https://frozen.productions)
+🔗 [Visit Live Site]([https://frozen.productions](https://frozen-productions.vercel.app))
 
 ## ✨ Features
 
